@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  postgres:
+    build:
+      context: .
+      dockerfile: Dockerfile-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: primesnipers
+      POSTGRES_USER: PiousAn
+      POSTGRES_PASSWORD: Pious123
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  spring-boot-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8080"
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/primesnipers
+      SPRING_DATASOURCE_USERNAME: PiousAn
+      SPRING_DATASOURCE_PASSWORD: Pious123
+
+  angular:
+    build:
+      context: .
+      dockerfile: Dockerfile-angular
+    ports:
+      - "80:80"
